@@ -23,22 +23,22 @@ export function addSelectedObjects(object){
 
 export function createBox() {
     const texLoader = new THREE.TextureLoader();
-    // const materialArray = [
-    //     new THREE.MeshStandardMaterial({ color: 'green' }),
-    //     new THREE.MeshStandardMaterial({ color: 'red' }),
-    //     new THREE.MeshStandardMaterial({ color: 'blue' }),
-    //     new THREE.MeshStandardMaterial({ color: 'yellow' }),
-    //     new THREE.MeshStandardMaterial({ color: 'orange' }),
-    //     new THREE.MeshStandardMaterial({ color: 'purple' }),
-    // ];
     const materialArray = [
-        new THREE.MeshStandardMaterial({ map: texLoader.load("grass.jpg") }),
-        new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
-        new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
-        new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
-        new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
-        new THREE.MeshStandardMaterial({ map: texLoader.load("moon.jpg") }),
+        new THREE.MeshStandardMaterial({ color: 'green' }),
+        new THREE.MeshStandardMaterial({ color: 'red' }),
+        new THREE.MeshStandardMaterial({ color: 'orange' }),
+        new THREE.MeshStandardMaterial({ color: 'yellow' }),
+        new THREE.MeshStandardMaterial({ color: 'blue' }),
+        new THREE.MeshStandardMaterial({ color: 'purple' }),
     ];
+    // const materialArray = [
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("grass.jpg") }),
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
+    //     new THREE.MeshStandardMaterial({ map: texLoader.load("moon.jpg") }),
+    // ];
 
     const box = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),
