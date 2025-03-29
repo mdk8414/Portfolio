@@ -4,14 +4,22 @@ import { selectedObjects, addSelectedObjects } from './objects';
 
 let moveCamArray = [false, true, true, true, true, true];
 
-export function moveCamera(camera, cam_tween_group, domTop, moveCamFwd) {
-    console.log(domTop);
+export function scrollCameraVertical(camera) {
+
+    const t = document.body.getBoundingClientRect().top;
+
+    camera.position.y = t * 0.02;
+
+}
+
+export function moveCamera(camera, cam_tween_group) {
     const h = document.documentElement.scrollHeight * 0.5
-    console.log("height", h)
-    if (moveCamArray[5] && domTop <= -h) {
+    const domTop = document.body.getBoundingClientRect().top;
+
+    const createMoveCameraTween = (_x, _z) => {
         cam_tween_group.add ( 
             new TWEEN.Tween(camera.position)
-                .to({ x: 10, z: 5 }, 1000)
+                .to({ x: _x, z: _z }, 1000)
                 .onUpdate((coords) => {
                     camera.position.z = coords.z;
                     camera.position.x = coords.x;
@@ -19,91 +27,49 @@ export function moveCamera(camera, cam_tween_group, domTop, moveCamFwd) {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .start()
         );
+    }
+
+    if (moveCamArray[5] && domTop <= -h) {
+        createMoveCameraTween(10, 5);
         // setTimeout(function() {}, 50);
         moveCamArray = [true, true, true, true, true, false];
     } 
     else if (moveCamArray[4] && domTop <= -4/5 * h) {
-        cam_tween_group.add ( 
-            new TWEEN.Tween(camera.position)
-                .to({ x: 5, z: 5 }, 1000)
-                .onUpdate((coords) => {
-                    camera.position.z = coords.z;
-                    camera.position.x = coords.x;
-                })
-                .easing(TWEEN.Easing.Quadratic.InOut)
-                .start()
-        );
+        createMoveCameraTween(5, 5);
         moveCamArray = [true, true, true, true, false, true];
         // setTimeout(function() {}, 50);
     } 
     else if (moveCamArray[3] && domTop <= -3/5 * h) {
-        cam_tween_group.add ( 
-            new TWEEN.Tween(camera.position)
-                .to({ x: 0, z: 5 }, 1000)
-                .onUpdate((coords) => {
-                    camera.position.z = coords.z;
-                    camera.position.x = coords.x;
-                })
-                .easing(TWEEN.Easing.Quadratic.InOut)
-                .start()
-        );
+        createMoveCameraTween(0, 5);
         moveCamArray = [true, true, true, false, true, true];
         // setTimeout(function() {}, 50);
     } 
     else if (moveCamArray[2] && domTop <= -2/5 * h) {
-        cam_tween_group.add ( 
-            new TWEEN.Tween(camera.position)
-                .to({ x: -5, z: 5 }, 1000)
-                .onUpdate((coords) => {
-                    camera.position.z = coords.z;
-                    camera.position.x = coords.x;
-                })
-                .easing(TWEEN.Easing.Quadratic.InOut)
-                .start()
-        );
+        createMoveCameraTween(-5, 5);
         moveCamArray = [true, true, false, true, true, true];
         // setTimeout(function() {}, 50);
     } 
     else if (moveCamArray[1] && domTop <= -1/5 * h) {
-        cam_tween_group.add ( 
-            new TWEEN.Tween(camera.position)
-                .to({ x: -10, z: 5 }, 1000)
-                .onUpdate((coords) => {
-                    camera.position.z = coords.z;
-                    camera.position.x = coords.x;
-                })
-                .easing(TWEEN.Easing.Quadratic.InOut)
-                .start()
-        );
+        createMoveCameraTween(-10, 5);
         moveCamArray = [true, false, true, true, true, true];
         // setTimeout(function() {}, 50);
     } 
     else if (moveCamArray[0] && domTop > -1/5 * h) {
-        cam_tween_group.add (
-            new TWEEN.Tween(camera.position)
-                .to({ x: 0, z: 15 }, 1000)
-                .onUpdate((coords) => {
-                    camera.position.z = coords.z;
-                    camera.position.x = coords.x;
-                })
-                .easing(TWEEN.Easing.Quadratic.InOut)
-                .start()
-        );
+        createMoveCameraTween(0, 15);
         moveCamArray = [false, true, true, true, true, true];
         // setTimeout(function() {}, 50);
     }
 
-    return moveCamFwd;
 }
 
 export function moveCameraToObject(scene, camera, cam_tween_group) {
-
+    // window.scrollY = 0;
     const pointer = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
 
     // let OBJECT;
 
-    const onMouseClick = (event) => {
+    return (event) => {
         event.preventDefault();
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -111,14 +77,13 @@ export function moveCameraToObject(scene, camera, cam_tween_group) {
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
 
-        console.log("Outside");
         if (intersects.length > 0) {
-            console.log("Inside");
             cam_tween_group.add ( 
                 new TWEEN.Tween(camera.position)
-                    .to( { x: intersects[0].object.position.x, z: 5 }, 1000)
+                    .to( { x: intersects[0].object.position.x, y: intersects[0].object.position.y, z: intersects[0].object.position.z + 5 }, 1000)
                     .onUpdate((coords) => {
                         camera.position.x = coords.x;
+                        camera.position.y = coords.y;
                         camera.position.z = coords.z;
                     })
                     .easing(TWEEN.Easing.Quadratic.InOut)
@@ -126,7 +91,6 @@ export function moveCameraToObject(scene, camera, cam_tween_group) {
             );
 
             // addSelectedObjects(intersects[0]);
-
             
         } else {
             cam_tween_group.add ( 
@@ -140,8 +104,6 @@ export function moveCameraToObject(scene, camera, cam_tween_group) {
             );
         }
     };
-
-    window.addEventListener('click', onMouseClick);
     
 }
 
@@ -192,9 +154,12 @@ export function rotateBox(box, box_tween_group) {
     );
 
 }
-// Function to create rotating box animation with random delay
-export function rotateBoxRandomDelay(box, box_tween_group) {
 
+// Function to create rotating box animation with random delay
+export function rotateBoxRandomDelay(box) {
+
+    const box_tween_group = new TWEEN.Group();
+    
     const createRotationTween = (startAngle, endAngle) => {
         return new TWEEN.Tween({ x: startAngle.x, y: startAngle.y, z: startAngle.z })
             .to({ x: endAngle.x, y: endAngle.y, z: endAngle.z }, 1000)
@@ -227,22 +192,37 @@ export function rotateBoxRandomDelay(box, box_tween_group) {
     }
     tweens[tweens.length - 1].chain(tweens[0]);
 
-
-    // Chain them together
-    // tween1.chain(tween2);
-    // tween2.chain(tween3);
-    // tween3.chain(tween4);
-    // tween4.chain(tween5);
-    // tween5.chain(tween6);
-    // tween6.chain(tween7);
-    // tween7.chain(tween8);
-    // tween8.chain(tween1);
-
     tweens[0].start();
     
     box_tween_group.add(...tweens);
 
+    return box_tween_group;
+
 }
+
+// Function to create rotating box animation with random delay
+export function rotateBoxManual(box) {
+    var rand = Math.ceil(Math.random() * 0.01) * (Math.round(Math.random()) ? 1 : -1)
+    box.rotation.x += 0.01 + 0.01 * rand;
+    rand = Math.ceil(Math.random() * 0.01) * (Math.round(Math.random()) ? 1 : -1)
+    box.rotation.y += 0.01 + 0.01 * rand;
+    rand = Math.ceil(Math.random() * 0.01) * (Math.round(Math.random()) ? 1 : -1)
+    box.rotation.z += 0.01 + 0.01 * rand;
+}
+
+export function rotateBoxOnScroll(box) {
+    const domTop = document.body.getBoundingClientRect().top;
+    box.rotation.x = -0.002 * domTop;
+}
+
+
+
+export function fixBoxRotation(box) {
+
+    // box.rotation.x = lerp()
+
+}
+
 
 // Function to create random rotating box animation
 // export function rotateBoxRandom(box, box_tween_group) {

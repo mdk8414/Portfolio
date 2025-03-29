@@ -21,7 +21,8 @@ export function addSelectedObjects(object){
     selectedObjects.push(object);
 }
 
-export function createBox(texLoader) {
+export function createBox() {
+    const texLoader = new THREE.TextureLoader();
     // const materialArray = [
     //     new THREE.MeshStandardMaterial({ color: 'green' }),
     //     new THREE.MeshStandardMaterial({ color: 'red' }),
@@ -31,7 +32,7 @@ export function createBox(texLoader) {
     //     new THREE.MeshStandardMaterial({ color: 'purple' }),
     // ];
     const materialArray = [
-        new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
+        new THREE.MeshStandardMaterial({ map: texLoader.load("grass.jpg") }),
         new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
         new THREE.MeshStandardMaterial({ map: texLoader.load("space.jpg") }),
         new THREE.MeshStandardMaterial({ map: texLoader.load("space2.avif") }),
